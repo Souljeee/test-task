@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/core/data/subscription_repository.dart';
 import 'package:test_task/core/theme/app_colors.dart';
 import 'package:test_task/paywall/ui/success_payment_bottom_sheet.dart';
 
@@ -12,6 +13,8 @@ class PaywallScreen extends StatefulWidget {
 }
 
 class _PaywallScreenState extends State<PaywallScreen> {
+  final _subscriptionRepository = const SubscriptionRepository();
+
   _Plan _selected = _Plan.yearly;
   bool _isLoading = false;
 
@@ -19,9 +22,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
     setState(() => _isLoading = true);
     // Эмуляция покупки
     await Future.delayed(const Duration(seconds: 2));
+    await _subscriptionRepository.saveSubscription(value: true);
     if (!mounted) return;
     setState(() => _isLoading = false);
-    // TODO: сохранить подписку и перейти на главный экран
     _showSuccessSheet();
   }
 
