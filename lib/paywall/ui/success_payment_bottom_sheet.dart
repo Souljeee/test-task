@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_task/core/theme/app_colors.dart';
+import 'package:test_task/home/ui/home_screen.dart';
 
 class SuccessPaymentBottomSheet extends StatelessWidget {
   const SuccessPaymentBottomSheet({super.key});
@@ -71,8 +72,12 @@ class SuccessPaymentBottomSheet extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(14),
                   onTap: () {
-                    Navigator.of(context).pop();
-                    // TODO: перейти на главный экран
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const HomeScreen(),
+                      ),
+                      (_) => false,
+                    );
                   },
                   child: const Center(
                     child: Text(

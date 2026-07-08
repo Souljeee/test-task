@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_task/core/data/subscription_repository.dart';
+import 'package:test_task/home/ui/home_screen.dart';
 import 'package:test_task/onboarding/ui/onboarding_screen.dart';
 
 Future<void> main() async {
@@ -20,7 +21,7 @@ class ApplicationContext extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: hasSubscription ? const OnboardingScreen() : const OnboardingScreen(),
+      home: hasSubscription ? const HomeScreen() : const OnboardingScreen(),
     );
   }
 }
