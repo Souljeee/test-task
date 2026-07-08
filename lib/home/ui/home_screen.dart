@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/core/data/subscription_repository.dart';
 import 'package:test_task/core/mocks.dart';
 import 'package:test_task/core/theme/app_colors.dart';
 import 'package:test_task/home/ui/card_detail_bottom_sheet.dart';
+import 'package:test_task/paywall/ui/paywall_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  Future<void> _cancelSubscription(BuildContext context) async {
+    await const SubscriptionRepository().saveSubscription(value: false);
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute<void>(builder: (_) => const PaywallScreen()),
+      (_) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      floatingActionButton: _CancelSubscriptionButton(
+        onTap: () => _cancelSubscription(context),
+      ),
       body: CustomScrollView(
         slivers: [
           _AppBar(),
@@ -77,6 +90,93 @@ class _AppBar extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CancelSubscriptionButton extends StatelessWidget {
+  const _CancelSubscriptionButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () => _showConfirmDialog(context),
+      backgroundColor: AppColors.surface,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.error, width: 1),
+      ),
+      icon: const Icon(Icons.cancel_outlined, color: AppColors.error, size: 18),
+      label: const Text(
+        'Отменить подписку',
+        style: TextStyle(
+          color: AppColors.error,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  void _showConfirmDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => _CancelSubscriptionDialog(onConfirm: onTap),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Cancel subscription dialog
+// ---------------------------------------------------------------------------
+
+class _CancelSubscriptionDialog extends StatelessWidget {
+  const _CancelSubscriptionDialog({required this.onConfirm});
+
+  final VoidCallback onConfirm;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: const Text(
+        'Отменить подписку?',
+        style: TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      content: const Text(
+        'Доступ к Premium-контенту будет закрыт.',
+        style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text(
+            'Нет',
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            onConfirm();
+          },
+          child: const Text(
+            'Да, отменить',
+            style: TextStyle(
+              color: AppColors.error,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
