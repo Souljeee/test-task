@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:test_task/core/theme/app_colors.dart';
+import 'package:test_task/paywall/ui/paywall_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -41,7 +42,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // TODO: navigate to Paywall
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(builder: (_) => const PaywallScreen()),
+      );
     }
   }
 
@@ -229,7 +232,7 @@ class _PageIndicator extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(pageCount, (index) {
         final isActive = index == currentPage;
-        
+
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
