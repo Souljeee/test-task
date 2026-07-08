@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_task/core/mocks.dart';
 import 'package:test_task/core/theme/app_colors.dart';
+import 'package:test_task/home/ui/card_detail_bottom_sheet.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -91,7 +92,12 @@ class _ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => CardDetailBottomSheet.show(context, data),
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
@@ -152,6 +158,8 @@ class _ItemCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+        ),
       ),
     );
   }
