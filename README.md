@@ -1,16 +1,55 @@
 # test_task
 
-A new Flutter project.
+Тестовое Flutter-приложение с онбордингом, paywall и главным экраном.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Архитектура
 
-A few resources to get you started if this is your first Flutter project:
+Проект построен по **feature-first** структуре без внешних state-management решений. Каждый экран — `StatefulWidget` или `StatelessWidget` с локальным состоянием. Общий код вынесен в `core`.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Для хранения состояния подписки используется **SharedPreferences**. Доступ к хранилищу изолирован в `SubscriptionRepository`, что позволяет легко подменить реализацию.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Навигация реализована через стандартный `Navigator` с `MaterialPageRoute`. При запуске приложения `main.dart` синхронно читает флаг подписки и направляет пользователя либо на онбординг, либо сразу на главный экран.
+
+---
+
+## Структура проекта
+
+```
+lib/
+├── main.dart                          # Точка входа, роутинг при старте
+│
+├── core/
+│   ├── data/
+│   │   └── subscription_repository.dart   # Работа с SharedPreferences
+│   ├── theme/
+│   │   └── app_colors.dart                # Цветовая палитра приложения
+│   └── mocks.dart                         # Мок-данные для главного экрана
+│
+├── onboarding/
+│   └── ui/
+│       └── onboarding_screen.dart         # 2-страничный онбординг (PageView)
+│
+├── paywall/
+│   └── ui/
+│       ├── paywall_screen.dart            # Экран выбора подписки
+│       └── success_payment_bottom_sheet.dart  # Bottom sheet после покупки
+│
+└── home/
+    └── ui/
+        ├── home_screen.dart               # Главный экран со списком карточек
+        └── card_detail_bottom_sheet.dart  # Bottom sheet с деталями карточки
+```
+
+---
+
+## Что улучшил бы при большем времени
+
+- **State management** — добавил бы Bloc для разделения бизнес-логики и UI. Сейчас логика частично живёт прямо в виджетах (в целях ускорения разработки).
+- **Навигация** — заменил бы императивный `Navigator` на `go_router` с именованными маршрутами и deep link поддержкой.
+- **Разделение слоёв** — выделил бы отдельные `Bloc` для каждого экрана, вынес бы работу с репозиторием из виджетов.
+- **Тесты** — покрыл бы `SubscriptionRepository` unit-тестами, а экраны — widget-тестами.
+- **Реальный биллинг** — интегрировал бы `purchases_flutter` (RevenueCat) вместо эмуляции покупки.
+- **Изображения** — заменил бы сетевые `picsum.photos` на локальные ассеты с proper кэшированием через `cached_network_image`.
+- **Темизация** — расширил бы `AppColors` до полноценного `ThemeData`, чтобы виджеты брали цвета из `Theme.of(context)`, а не из статического класса напрямую.
