@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/core/data/subscription_repository.dart';
 import 'package:test_task/onboarding/ui/onboarding_screen.dart';
 
-void main() {
-  runApp(const ApplicationContext());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final subscriptionRepository = const SubscriptionRepository();
+
+  final hasSubscription = await subscriptionRepository.hasSubscription();
+
+  runApp(ApplicationContext(hasSubscription: hasSubscription));
 }
 
 class ApplicationContext extends StatelessWidget {
-  const ApplicationContext({super.key});
+  const ApplicationContext({super.key, required this.hasSubscription});
+
+  final bool hasSubscription;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: OnboardingScreen(),
+      home: hasSubscription ? const OnboardingScreen() : const OnboardingScreen(),
     );
   }
 }
